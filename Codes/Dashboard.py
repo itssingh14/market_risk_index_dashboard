@@ -689,5 +689,5 @@ if st.sidebar.button("Generate Plots"):
     sentiment, sentiment_percentage = get_sentiment_ratio(news_df)
     print(f"{sentiment_percentage:.2f}% {sentiment}")
     with col5:
-              
+    
       st.metric(label="Predicted closing price of stock :", value = f"{forecast:.2f}$")
