@@ -40,7 +40,6 @@ def get_data(tickers, start_date, end_date):
 
 # Function to calculate the Market Regime Indicator (MRI)
 def calculate_mri(data, lookback_periods, slope_factor):
-    
     # Calculate daily returns as the percentage change from the previous day's closing price
     daily_returns = (data - data.shift(1)) / data.shift(1)
     
@@ -250,7 +249,7 @@ def plot_quadrant_chart(mri_dif, mri_slope, ticker):
     for month, color, label in zip(months, colors, month_labels):
         month_data = df[df['Month'] == month]
         plt.scatter(month_data['MRI'], month_data['MRI Slope'], c=[color], label=label, edgecolors='w')
-        plt.plot(month_data['MRI'], month_data['MRI Slope'], color=color, alpha=0.8, linestyle='-', linewidth=1, zorder=1)
+        plt.plot(month_data['MRI'], month_data['MRI Slope'], color=color, alpha=0.8, linestyle='-', linewidth=3, zorder=1)
     
     # Mark the last entry
     last_entry = df.iloc[-1]
@@ -300,7 +299,20 @@ def plot_risk_aversion_vs_returns(risk_aversion, returns, ticker):
         # Predict trendline values and adjust by subtracting 0.05
         trendline = model.predict(risk_aversion.values.reshape(-1, 1)) - 0.05
         plt.plot(risk_aversion, trendline, color='black', linestyle='--', label='Trendline')
-
+        
+        # Extract the slope and intercept from the model
+        slope = model.coef_[0][0]
+        intercept = model.intercept_[0]
+        
+        # Display the equation of the line
+        plt.text(0.05, 0.90, f'y = {slope:.2f}x + {intercept:.2f}', transform=plt.gca().transAxes, 
+                 fontsize=14, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+        
+        # Calculate and display the R^2 value
+        r2 = r2_score(returns, model.predict(risk_aversion.values.reshape(-1, 1)))
+        plt.text(0.05, 0.95, f'R² = {r2:.2f}', transform=plt.gca().transAxes, 
+                 fontsize=14, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
+        
         # Mark and label the last data point
         last_point = len(risk_aversion) - 1
         plt.scatter(risk_aversion.iloc[last_point], returns.iloc[last_point], color='red', label='Last')
@@ -308,7 +320,7 @@ def plot_risk_aversion_vs_returns(risk_aversion, returns, ticker):
                  f'Last\n({risk_aversion.iloc[last_point]:.2f}, {returns.iloc[last_point]:.2f})', 
                  horizontalalignment='right')
 
-    # Set limits to center the origin (0,0) for better visualisation
+    # Set limits to center the origin (0,0) for better visualization
     xlim = (min(risk_aversion.min(), 0), max(risk_aversion.max(), 0))
     ylim = (min(returns.min(), 0), max(returns.max(), 0))
     
@@ -327,7 +339,6 @@ def plot_risk_aversion_vs_returns(risk_aversion, returns, ticker):
     plt.legend()
     plt.tight_layout()
     st.pyplot(plt)
-
 
 # Function to plot risk on, risk off, and ticker performance
 def plot_risk_on_risk_off_performance(risk_on, risk_off, ticker_performance, selected_ticker):
@@ -388,7 +399,7 @@ def display_news_articles(articles):
 
     with st.container():
         # Display sentiment information (placeholders used here)
-        st.markdown(f"<h2 style='font-size: 18px;'>S&P 500 Sentiment is {sentiment_percentage}% ({sentiment})</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='font-size: 18px;'>S&P 500 Sentiments are {sentiment_percentage}% ({sentiment})</h2>", unsafe_allow_html=True)
         
         # Define CSS style for news articles
         st.markdown("<style> .news-article { font-size: 12px; } </style>", unsafe_allow_html=True)
