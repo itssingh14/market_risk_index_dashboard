@@ -278,7 +278,7 @@ def plot_risk_aversion_vs_returns(risk_aversion, returns, ticker):
     valid_mask = ~risk_aversion.isna() & ~returns.isna()
     
     # Adjust risk aversion values and scale returns
-    risk_aversion = risk_aversion[valid_mask] - 0.19
+    risk_aversion = risk_aversion[valid_mask] + 0.44
     returns = returns[valid_mask] * 4
 
     # Check if there is valid data to plot
